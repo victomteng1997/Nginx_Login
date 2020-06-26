@@ -1,0 +1,48 @@
+#1. Install Elasticsearch, Kibana and Nginx
+
+#2. By default, Elasticsearch and Kibana are configured to be localhost access only. To doublecheck, verify in elasticsearch.yml and kibana.yml:
+
+##elasticsearch.yml:
+network.host: 127.0.0.1 (or just comment out this line. By default, elasticsearch is only open to localhost.)
+##kibana.yml
+server.host: "localhost" (or just comment out this line. By default, kibana is only open to localhost.)
+
+#3. Create password for nginx login using htpasswd:
+$ htpasswd -c /path/to/file/.htpasswd <username>
+then key in password. 
+In the following example, password is stored in /etc/nginx/passwd/.login through command:
+$ htpasswd -c /path/to/file/.htpasswd <username>
+
+#4. Configure Nginx with nginx.conf
+In the attached configuration file, two local proxy listner are set on port 8881 and 8882 with authentication.
+After user login with credentials created in the previous step, the traffice from those two ports will be redirected to localport 9200 (elasticsearch) and 5601 (kibana).
+
+#5. Verification
+After proper setups, restart the elasticsearch, kibana and nginx services.
+To verify that the above configurations are done properly:
+
+$ curl 127.0.0.1:9200
+{
+  "name" : "ubuntu1804",
+  "cluster_name" : "elasticsearch",
+...
+
+$ curl 127.0.0.1:5601/app/kibana
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/><meta name="viewport" content="width=device-width"/><title>Elastic</title><style>
+...
+
+$ curl public_ip:9200
+curl: (7) Failed to connect to public_ip port 9200: Connection refused
+
+$ curl public_ip:5601
+curl: (7) Failed to connect to public_ip port 5601: Connection refused
+
+$ curl -u <username>:<password> public_ip:8881
+same as localport 9200
+
+$ curl curl -u <username>:<password> public_ip:8882/app/kibana
+same as localport 5601
+
+User can also verify from brower.
+
+
