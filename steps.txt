@@ -11,7 +11,7 @@ server.host: "localhost" (or just comment out this line. By default, kibana is o
 $ htpasswd -c /path/to/file/.htpasswd <username>
 then key in password. 
 In the following example, password is stored in /etc/nginx/passwd/.login through command:
-$ htpasswd -c /path/to/file/.htpasswd <username>
+$ htpasswd -c /etc/nginx/passwd/.login <username>
 
 #4. Configure Nginx with nginx.conf
 In the attached configuration file, two local proxy listner are set on port 8881 and 8882 with authentication.
